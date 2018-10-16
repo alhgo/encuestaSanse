@@ -605,7 +605,8 @@ class mailBody extends PHPMailer\PHPMailer\PHPMailer
 
 	public function getBodyHTML()
 	{
-		$this->bodyHTML = file_get_contents('includes/templates/mail_html_basic.html');
+		$site = new Site;
+		$this->bodyHTML = file_get_contents($site->url . '/includes/templates/mail_html_basic.html');
 		
 		//Sustituimos los contenidos
 		$array_search = array('{{preheader}}','{{site.url}}','{{site.title}}','{{content}}');

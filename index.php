@@ -6,27 +6,40 @@ require_once('includes/toolkit.php');
 $user = new Users;
 $site = new Site;
 
+$action = (isset($_GET['action'])) ? $_GET['action'] : '';
 ?>
 
 <?php snippet('header.php', ['site' => $site]); ?>
 
 <body>
 
-<?php snippet('nav.php',['menu' => array('Menú 1' => 'menu1.html', 'Menú 2' => 'menu2.html'), 'site' => $site, 'user' => $user]); ?>
+<?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
 
 	<div class="container-fluid p-0 m-0">
 		
-		<?php snippet('breadcrumb.php',array('data' => ['Inicio' => 'index.php'])); ?>
+		<?php //snippet('breadcrumb.php',array('data' => ['Inicio' => 'index.php'])); ?>
 	</div>
-	<div class="container">
+	<div class="container mt-3">
 		
-		<?php snippet('home.php'); ?>
+		<?php
+		if($action == 'registerUser')
+		{
+			snippet('encuesta/register.php');
+		}
+		else
+		{
+			snippet('encuesta/home.php');
+			snippet('encuesta/user_register_form.php');
+		}
 		
-		<?php if(c::get('use.database') && !$user->logged) snippet('user/login_form_modal.php'); ?>
+		?>
+	
 
 	</div>
 	
-<?php snippet('footer.php', ['libs' => array('forms.js')]); ?>
+<?php snippet('encuesta/remember_form_modal.php'); ?>
+	
+<?php snippet('footer.php', ['libs' => array('encuesta.js')]); ?>
 
 </body>
 </html>
