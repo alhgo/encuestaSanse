@@ -20,7 +20,7 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 
 <?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
 
-	<div class="container p-0 m-0">
+	<div class="container-fluid p-0 m-0">
 		
 		<?php snippet('breadcrumb.php',array('data' => ['Inicio' => 'index.php', 'Encuesta' => ''])); ?>
 	</div>

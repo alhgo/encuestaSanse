@@ -51,10 +51,11 @@ class encuesta {
 	public function encuestadoCheck($id,$token)
 	{
 		$db = $this->db;
-		$db->where ('id_encuestado', $id);
-		$db->where ('token', $token);
-		$data = $db->get ('encuestados');
-		//echo($db->count);
+		//$db->where ('id_encuestado', $id);
+		//$db->where ('token', $token);
+		//$data = $db->get ('encuestados');
+		$data = $db->rawQuery("SELECT * from encuestados where id_encuestado $id AND token = '$token'");
+		
 		
 		if($db->count === 0)
 		{
@@ -124,7 +125,7 @@ class encuesta {
 		//Construimos el texto de previo para algunos clientes
 		$body->bodyPreheader = "Solicitud para realizar encuensta en " . $site->title;
 		//Construimos el cuerpo, que incluye párrafos y un botón
-		$url_confirm = c::get('site.url') . '/encuesta.php?u&id=' . $id . '&t=' . $data['token'];
+		$url_confirm = c::get('site.url') . 'encuesta.php?u&id=' . $id . '&t=' . $data['token'];
 		//echo $url_confirm;
 		$button = $body->bodyButton($url_confirm,"Realizar encuesta");
 		$body->bodyContent = "
@@ -155,10 +156,10 @@ class encuesta {
 
 		} catch (Exception $e) {
 			//Insertamos un mensaje de error en el LOG
-			$error_msg = 'Se ha producido un error al enviar el correo al usuario temporal (ID: ' . $id . '). Código de error: ' . $mail->ErrorInfo;
+			$error_msg = 'Se ha producido un error al enviar el correo al encuestado (ID: ' . $id . '). Código de error: ' . $mail->ErrorInfo;
 			log::putErrorLog($error_msg);
 
-			throw new Exception("Error el enviar el correo");
+			throw new Exception("Error el enviar el correo." . $url_confirm);
 
 		} 
 	}

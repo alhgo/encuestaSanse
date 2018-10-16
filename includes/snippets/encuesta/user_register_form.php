@@ -48,7 +48,7 @@ $zonas = $encuesta->getZonas();
 				  <div class="invalid-feedback" id="fb-birth"></div>
 				</div>
 				
-				  <div class="form-group col-md-4">
+				  <div class="form-group col-md-4 text-center">
 					  	<div class="form-check-inline">
 						  <label class="form-check-label" for="radio1">
 							<input type="radio" class="form-check-input" id="radio1" name="r-sexo" value="H" >Hombre

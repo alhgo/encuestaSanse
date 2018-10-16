@@ -1,14 +1,19 @@
 <?php
 $current = basename( $_SERVER[ 'PHP_SELF' ] );
 //Comprobamos que se le ha pasado un menú
-
 ?>
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 	<div class="container">
-		<!--title-->
-		<a class="navbar-brand" href="<?= $site->url ?>"><?= $site->title ?></a>
+		<!--title/logo-->
+		<a class="navbar-brand pt-0 pb-0" href="<?= $site->url ?>">
+		<?php if(is_file(__DIR__ . '/../../images/logo_top.png')) : ?>
+		<img src="<?= $site->url ?>/images/logo_top.png" alt="<?= $site->title ?>" title="<?= $site->title ?>" height="42">
+		<?php else : ?>
+		<?= $site->title ?>
+		<?php endif ?>
+		</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

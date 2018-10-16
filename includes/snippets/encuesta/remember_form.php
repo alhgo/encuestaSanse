@@ -24,6 +24,6 @@
 	
 	<!-- Modal footer -->
       <div class="modal-footer" style="display: block">
-       	<p><a href="user.php?action=register">¿No estás registrado?</a> - <a href="user.php?action=rememberPass">¿Olvidaste tu contraseña?</a></p>
+       
         <!--<button type="button" class="btn btn-danger" data-dismiss="modal"><Cerrar></Cerrar></button>-->
       </div>
