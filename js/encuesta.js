@@ -292,15 +292,18 @@ window.onload = function() {
 			{
 				result = "Se ha producido un error al comprobar el correo electrónico.";
 			}
-			//Ponemos el resultado 
-			markInputReg('remember_email',result);
-			if(result == '') 
+			//Si el correo ha sido enviado
+			if(result == 'sent') 
 			{
-				//$('#validate-email').val('1');
+				//Ocultamos el formulario y ponemos el aviso
+				$("#remember-content").slideUp('fast', function() {
+				   //Ponemos el aviso
+					$("#remember-body").html('<div class="alert alert-success" role="alert"><strong>Correo enviado.</strong> Hemos vuelto a mandar a su cuenta de correo el enlace para realizar la encuesta.</div>')
+				});
 			}
 			else
 			{
-				//$('#validate-email').val('0');
+				markInputReg('remember_email',result);
 			}
 
 		}); //Fin de comprobación mediante AJAX

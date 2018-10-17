@@ -1,7 +1,10 @@
 <?php
-$encuesta = new Encuesta;
-$zonas = $encuesta->getZonas();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
+$encuesta = new encuesta;
+$zonas = $encuesta->getZonas();
 
 ?>
 	<h4>Rellena tus datos para realizar la encuesta</h4>
@@ -81,4 +84,7 @@ $zonas = $encuesta->getZonas();
 	</div>
 <hr>
 <p>¿Ya has registrado tus datos y no has recibido el correo de confirmación? <a href="#" data-toggle="modal" data-target="#rememberModal">Pincha aquí</a></p>
+
+
+
 	

@@ -3,10 +3,10 @@
 require_once('includes/toolkit.php');
 
 //Obtenemos los datos del sitio y del usuario
-$user = new Users;
+$encuesta = new Encuesta;
 $site = new Site;
+$user = new Users;
 
-$action = (isset($_GET['action'])) ? $_GET['action'] : '';
 ?>
 
 <?php snippet('header.php', ['site' => $site]); ?>
@@ -15,25 +15,15 @@ $action = (isset($_GET['action'])) ? $_GET['action'] : '';
 
 <?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
 
+	<div class="container-fluid p-0 m-0">
+		
+		<?php snippet('breadcrumb.php',array('data' => ['Inicio' => 'index.php', 'Resultados' => ''])); ?>
+	</div>
 	<div class="container mt-3">
 		
-		<?php
-		if($action == 'registerUser')
-		{
-			snippet('encuesta/register.php');
-		}
-		else
-		{
-			snippet('encuesta/home.php');
-			snippet('encuesta/user_register_form.php');
-		}
-		
-		?>
+		<h4>Los resultados todavía no están disponibles</h4>
 	
-
 	</div>
-	
-<?php snippet('encuesta/remember_form_modal.php'); ?>
 	
 <?php snippet('footer.php', ['libs' => array('encuesta.js')]); ?>
 

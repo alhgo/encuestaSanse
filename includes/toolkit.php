@@ -73,7 +73,7 @@ if(c::get('use.database'))
 			'charset' => 'utf8'))
 	   )
 	{
-		die('Se ha producido un problema al conectar con la base de datos');
+		die('Se ha producido un problema al conectar con la base de datos' . $db->getLastError());
 	}
 	else{
 		//Comprobamos que la tabla de base de datos existe

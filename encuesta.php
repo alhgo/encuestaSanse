@@ -39,11 +39,13 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 			try {
 				//Desactivamos los errores de la clase PHP Mailer
 				$encuesta->encuestadoCheck($id_user, $token);
-				echo "Mostrar la encuesta";
+				
+				echo $encuesta->mostrarEncuesta($id_user);
 				
 			} catch (Exception $e) {
 				
-				echo $e->getMessage();
+				echo '<div class="alert alert-warning" role="alert">
+  <strong>Error.</strong> ' . $e->getMessage() . '</div>';
 			}
 		}
 

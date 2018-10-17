@@ -19,14 +19,19 @@ class encuesta {
 		$site = new Site;
 		
 		//Conectamos con la base de datos
-		$this->db = new MysqliDb (Array (
-                'host' => c::get('db.host'),
-                'username' => c::get('db.username'), 
-                'password' => c::get('db.password'),
-                'db'=> c::get('db.database'),
-                'port' => c::get('db.port'),
-                'prefix' => '',
-                'charset' => 'utf8'));
+		if(!$this->db = new MysqliDb (Array (
+				'host' => c::get('db.host'),
+				'username' => c::get('db.username'), 
+				'password' => c::get('db.password'),
+				'db'=> c::get('db.database'),
+				'port' => c::get('db.port'),
+				'prefix' => '',
+				'charset' => 'utf8'))
+		   )
+		{
+			die('Se ha producido un problema al conectar con la base de datos' . $db->getLastError());
+		}
+		
 	}
 	
 	function __destruct(){
@@ -54,7 +59,7 @@ class encuesta {
 		//$db->where ('id_encuestado', $id);
 		//$db->where ('token', $token);
 		//$data = $db->get ('encuestados');
-		$data = $db->rawQuery("SELECT * from encuestados where id_encuestado $id AND token = '$token'");
+		$data = $db->rawQuery("SELECT * from encuestados where id_encuestado = $id AND token = '$token'");
 		
 		
 		if($db->count === 0)
@@ -99,10 +104,15 @@ class encuesta {
 	
 	public function getZonas()
 	{
-		$database = $this->db;
-		$zonas = $database->get('zonas'); //contains an Array of all users 
-
+		
+		$db = $this->db;
+		
+		if(!$zonas = $db->get('zonas')) {
+			die('La base de datos no está correctamente configurada: ' . $db->getLastError());
+		}
+		
 		return $zonas;
+		
 	}
 	
 	public function sendCorreo($id)
@@ -123,9 +133,9 @@ class encuesta {
 		//Construimos el cuerpo
 		$body = new mailBody; 
 		//Construimos el texto de previo para algunos clientes
-		$body->bodyPreheader = "Solicitud para realizar encuensta en " . $site->title;
+		$body->bodyPreheader = 'Solicitud recibida desde ' . $site->title;
 		//Construimos el cuerpo, que incluye párrafos y un botón
-		$url_confirm = c::get('site.url') . 'encuesta.php?u&id=' . $id . '&t=' . $data['token'];
+		$url_confirm = c::get('site.url') . 'encuesta.php?u=' . $id . '&t=' . $data['token'];
 		//echo $url_confirm;
 		$button = $body->bodyButton($url_confirm,"Realizar encuesta");
 		$body->bodyContent = "
@@ -143,7 +153,7 @@ class encuesta {
 		{
 			$mail->addAddress($data['correo']);
 		}
-		$mail->Subject  = 'Solicitud para realizar la encuesta en ' . $site->title;
+		$mail->Subject  = 'Solicitud recibida desde ' . $site->title;
 		$mail->isHTML(true); //Indicamos que es un correo HTML
 		$mail->CharSet = 'UTF-8'; //Convertimos los caracteres a UTF8
 		$mail->Body = $body->bodyHTML; //Insertamos el cuerpo construido previamente
@@ -162,6 +172,115 @@ class encuesta {
 			throw new Exception("Error el enviar el correo." . $url_confirm);
 
 		} 
+	}
+	
+	public function mostrarEncuesta($id_encuestado)
+	{
+		$db = $this->db;
+		//Obtenemos los datos del encuestado
+		$db->where ("id_encuestado", $id_encuestado);
+		if(!$encuestado = $db->getOne("encuestados")){
+			die('Error al obtener los datos el encuestado');
+		}
+		
+		//Creamos el texto de la encuesta
+		$encuesta = '<h1>Rellenar la encuesta</h1>
+		<h6>' . $encuestado['nombre'] . '</h6>
+		<hr>
+		<form action="encuesta.php?action=entregar" method="post" id="form-encuesta">';
+		
+		
+		//OBtenemos todas las preguntas
+		$p = $db->get('preguntas');
+		$preguntas = array();
+		//Creamos un array completo con las preguntas 
+		foreach($p AS $key => $val)
+		{
+			$id_pregunta = $val['id_pregunta'];
+			$preguntas[$id_pregunta] = array(
+				'id_pregunta' => $id_pregunta,
+				'texto' => $val['texto'],
+				'tipo' => $val['id_tipo']
+			);
+			//Si es de tipo "radio" (1) seleccionamos las opciones
+			if($val['id_tipo'] == 1)
+			{
+				$opts = $db->where('id_opt',$val['id_opt']);
+				$opts = $db->getOne("options");
+				for($n=1;$n<=$val['num_opt'];$n++)
+				{
+					$preguntas[$id_pregunta]['opciones'][$n] = $opts['opt_' . $n];
+				}
+				
+			}
+		}
+		//print_r($preguntas);
+		//Construimos la encuesta
+		$encuesta .= $this->preguntaTipoRadio($preguntas[1], 1);
+		$encuesta .= '<hr>';
+		$encuesta .= $this->preguntaTipoRadio($preguntas[2], 2);
+		$encuesta .= '<hr>';
+		$encuesta .= '<h5>3.- Responda si está de acuerdo, o no con las siguientes frases:</h5>
+		<h6>El Ayuntamiendo de Sanse...</h6>';
+		for($n=3;$n<=21;$n++)
+		{
+			//Fondo gris
+			if ($n % 2 == 0) {
+			  $bg = '#eeeeee';
+			}
+			else
+			{
+				$bg = '#ffffff';
+			}
+			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true,$bg);
+		}
+		
+		
+		$encuesta .= '<hr>
+		<input type="hidden" name="id_encuestado" value="' . $id_encuestado . '">
+		<span class="btn btn-primary" id="rellenar-button">Entregar</span>
+		</form>';
+		
+		return $encuesta;
+	}
+	
+	private function preguntaTipoRadio($data,$num="",$inline=false,$bg='#ffffff')
+	{
+		
+		if(!$inline)
+		{
+			$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
+			$texto = '<h5>' . $tit . '</h5>';
+			foreach($data['opciones'] AS $key => $val)
+			{
+				$texto .= '
+	<div class="form-check-inline" >
+	  <label class="form-check-label">
+		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '">' . $val . '
+	  </label>
+	</div>';
+			}
+		}
+		else
+		{
+			$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
+			$texto = '<div class="form-check-inline"><span class="ml-4">&#9656; ...' . $tit . ': </span></div>';
+			foreach($data['opciones'] AS $key => $val)
+			{
+				$texto .= '
+	<div class="form-check-inline">
+	  <label class="form-check-label">
+		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '">' . $val . '
+	  </label>
+	</div>';
+			}
+			
+		}
+		
+
+		
+		return $texto;
+		
 	}
 	
 	public function resendCorreo($email)

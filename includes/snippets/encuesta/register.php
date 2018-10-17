@@ -35,7 +35,7 @@ ERROR: <?= $error ?>
 </p>
 <a href="index.php" class="btn btn-primary">Volver</a>
 <?php else : ?>
-
-OLE
+<h4>Solicitur enviada</h4>
+Hemos enviado a la cuenta de correo indicada (<?= $_POST['r-email'] ?>) las instrucciones para realizar la encuesta. Si no recibe el correo revise la carpeta de SPAM de su gestor de correo o póngase en contacto con nosotros.
 
 <?php endif ?>
