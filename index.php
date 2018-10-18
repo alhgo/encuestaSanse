@@ -13,7 +13,7 @@ $action = (isset($_GET['action'])) ? $_GET['action'] : '';
 
 <body>
 
-<?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
+<?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'Contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
 
 	<div class="container mt-3">
 		

@@ -216,7 +216,7 @@ window.onload = function() {
 		//Si el año de nacimiento está vacío
 		if($('#r-birth').val().trim() == '')
 		{
-			markInputReg('birth','Debe indicar un año de nacimiento', false);
+			markInputReg('birth','Debe indicar su edad', false);
 			error = true;
 		}
 		else
@@ -242,7 +242,7 @@ window.onload = function() {
 		}
 		else
 		{
-			markInputReg('sexo','Debes indicar el sexo', false);	
+			markInputReg('sexo','Debe indicar el género', false);	
 			error = true;
 			
 		}

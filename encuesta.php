@@ -18,7 +18,7 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 
 <body>
 
-<?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
+<?php snippet('nav.php',['menu' => array('Resultados' => 'results.php', 'Página oficial' => 'http://www.izquierdaindependiente.es', 'Contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
 
 	<div class="container-fluid p-0 m-0">
 		
@@ -30,7 +30,9 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 		//Si se ha mandado la encuesta, la registramos
 		if($action == 'entregar')
 		{
-			
+			echo "<PRE>";
+			print_r($_POST);
+			echo "</PRE>";
 		}
 		
 		else

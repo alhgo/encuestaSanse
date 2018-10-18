@@ -203,7 +203,7 @@ class encuesta {
 				'tipo' => $val['id_tipo']
 			);
 			//Si es de tipo "radio" (1) seleccionamos las opciones
-			if($val['id_tipo'] == 1)
+			if($val['num_opt'] != 0)
 			{
 				$opts = $db->where('id_opt',$val['id_opt']);
 				$opts = $db->getOne("options");
@@ -215,36 +215,54 @@ class encuesta {
 			}
 		}
 		//print_r($preguntas);
+		
 		//Construimos la encuesta
 		$encuesta .= $this->preguntaTipoRadio($preguntas[1], 1);
 		$encuesta .= '<hr>';
 		$encuesta .= $this->preguntaTipoRadio($preguntas[2], 2);
 		$encuesta .= '<hr>';
-		$encuesta .= '<h5>3.- Responda si está de acuerdo, o no con las siguientes frases:</h5>
-		<h6>El Ayuntamiendo de Sanse...</h6>';
+		//Pregunta 3
+		$encuesta .= '<h5>3.- Responda si está de acuerdo, o no con las siguientes frases:</h5>';
+		$encuesta .= '<table class="table table-striped">';
+		$encuesta .= $this->preguntaTableHead("El Ayuntamiento de Sanse...",3,5);
+		//Por cada opción de la pregunta 3 (desde el ID 3 hasta el 21)
 		for($n=3;$n<=21;$n++)
 		{
-			//Fondo gris
-			if ($n % 2 == 0) {
-			  $bg = '#eeeeee';
-			}
-			else
-			{
-				$bg = '#ffffff';
-			}
-			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true,$bg);
+			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
 		}
 		
+		$encuesta .= '</tbody>
+		</table>
+		<hr>';
+		
+		//Pregunta 4 (id 22)
+		$encuesta .= $this->preguntaTipoTexto($preguntas[22], 4);
+		
+		
+		//Pregunta 5 (id 23)
+		$encuesta .= '<h5>5.- Valore del 1 al 5 la atención que, a su juicio, el actual Gobierno Municipal ha prestado a esos problemas, siendo 1 la menor atención y 5 la mayor:</h5>';
+		$encuesta .= '<table class="table table-striped">';
+		$encuesta .= $this->preguntaTableHead("Problema",5,6);
+		//Por cada opción de la pregunta 3 (desde el ID 23 hasta el 34)
+		for($n=23;$n<=34;$n++)
+		{
+			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
+		}
+		
+		$encuesta .= '</tbody>
+		</table>
+		<hr>';
 		
 		$encuesta .= '<hr>
 		<input type="hidden" name="id_encuestado" value="' . $id_encuestado . '">
-		<span class="btn btn-primary" id="rellenar-button">Entregar</span>
-		</form>';
+		<p><button type="submit" class="btn btn-primary" id="rellenar-button">Entregar</button></p>
+		</form>
+		<p class="mb-5">* Al enviar el formulario aceptas las condiciones de uso. Tus datos solo serán utilizados con fines estadísticos y nunca para comunicaciones posteriores, salvo que assí lo indiques.</p>';
 		
 		return $encuesta;
 	}
 	
-	private function preguntaTipoRadio($data,$num="",$inline=false,$bg='#ffffff')
+	private function preguntaTipoRadio($data,$num="",$inline=false)
 	{
 		
 		if(!$inline)
@@ -264,23 +282,70 @@ class encuesta {
 		else
 		{
 			$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
-			$texto = '<div class="form-check-inline"><span class="ml-4">&#9656; ...' . $tit . ': </span></div>';
+			
+			$texto = '
+	<tr>
+      <th scope="row">&#9659; ' . $tit . '</th>
+	';
 			foreach($data['opciones'] AS $key => $val)
 			{
 				$texto .= '
-	<div class="form-check-inline">
-	  <label class="form-check-label">
-		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '">' . $val . '
-	  </label>
-	</div>';
+	<td align="center">
+		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
+	</td>';
 			}
 			
+		$texto .= '</tr>';
 		}
 		
 
 		
 		return $texto;
 		
+	}
+	
+	private function preguntaTipoTexto($data,$num="")
+	{
+		$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
+		$texto = '<h5>' . $tit . '</h5>';
+		foreach($data['opciones'] AS $key => $val)
+			{
+				$texto .= '
+<div class="form-group">
+    <textarea class="form-control" name="pregunta_texto[' . $data['id_pregunta'] . '][' . $key . ']" rows="2" placeholder="' . $val . '"></textarea>
+ </div>';
+		}
+		
+		return $texto;
+	}
+	
+	private function preguntaTableHead($pregunta, $id_opt, $num_opt)
+	{
+		$txt = '
+  <thead>
+    <tr>
+		<th scope="col">' . $pregunta . '</th>';
+		//Obtenemos las opciones de la ID pasada
+		$db = $this->db;
+		$db->where ('id_opt', $id_opt);
+		$result = $db->getOne ('options');
+		if($db->count != 0)
+		{
+			for($n=1; $n<=$num_opt;$n++)
+			{
+				$txt .= '<th scope="col">' . $result['opt_' . $n] . '</th>';
+			}
+		}
+		
+		
+      
+      
+      $txt .= '
+    </tr>
+  </thead>
+  <tbody>';
+		
+		return $txt;
 	}
 	
 	public function resendCorreo($email)

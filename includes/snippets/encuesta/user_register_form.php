@@ -7,7 +7,7 @@ $encuesta = new encuesta;
 $zonas = $encuesta->getZonas();
 
 ?>
-	<h4>Rellena tus datos para realizar la encuesta</h4>
+	<h4>Rellena el formulario para poder realizar la encuesta</h4>
     <div class="row">
         <div class="col-lg-12">
 			<form action="index.php?action=registerUser" method="post" id="registerForm" class="form">
@@ -78,12 +78,13 @@ $zonas = $encuesta->getZonas();
 			  <input type="hidden" id="validate-email" value="0">
 			  <input type="hidden" id="registered" name="registered" value="<?= time() ?>">
 			  
-			  <span class="btn btn-primary" id="register-button">Registrarse</span>
+			  <span class="btn btn-primary" id="register-button">Validar correo</span>
 			</form>
 		</div>
 	</div>
 <hr>
-<p>¿Ya has registrado tus datos y no has recibido el correo de confirmación? <a href="#" data-toggle="modal" data-target="#rememberModal">Pincha aquí</a></p>
+<p>¿Ya has solicitado la validación del correo y no has recibido el correo de confirmación? <a href="#" data-toggle="modal" data-target="#rememberModal">Pincha aquí</a></p>
+<p>* Tus datos solo se usarán para la realización de la encuesta, a menos que nos solicites lo contrario.</p>
 
 
 
