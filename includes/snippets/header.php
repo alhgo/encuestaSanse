@@ -45,4 +45,11 @@
 	  firebase.initializeApp(config);
 	</script>
 	<?php endif ?>
-  </head>
+	  
+	<?php if(c::get('captcha.site') != '' && c::get('captcha.secret') != '') : ?>
+	
+	<!--Google CAPTCHA -->
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+
+	<?php endif ?>  
+</head>

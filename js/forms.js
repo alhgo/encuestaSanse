@@ -264,6 +264,10 @@ window.onload = function() {
 
 	});
 	
+	//Formulario de contacto
+	$( "#contact-button" ).click(function(event) {
+		console.log('hola');
+	});
 	
 	/*** REGISTER FORM VALIDATION ***/
 	//Función que marca los campos como válidos o inválidos en el formulario de registro
@@ -622,3 +626,11 @@ window.onload = function() {
 
 };
 
+//GOOGLE CAPTCHA response
+//https://www.youtube.com/watch?v=okaZ6OIqlzs
+function recaptcha_callback(){
+      //alert("callback working");
+	console.log('listo');
+      $('#contact-button').prop("disabled", false);
+      $('#contact-button').removeClass( "cursor_none");
+    }

@@ -348,6 +348,53 @@ class encuesta {
 		return $txt;
 	}
 	
+	public function rellenarEncuesta($data) 
+	{
+			
+		$db = $this->db;
+		$id_encuestado = $data['id_encuestado'];
+		
+		//Ponemos el $error a 0
+		$error = false;
+		$n = 0;
+		//Insertamos las respuestas tipo radio
+		foreach($data['pregunta'] AS $key => $val)
+		{
+			$insert = Array ("id_encuestado" => $id_encuestado,
+						   "id_pregunta" => $key,
+						   "opt" => $val
+			);
+			$id = $db->insert ('respuestas', $insert);
+			if($id) $n++;
+		}
+		
+		//Insertamos las respuestas tipo texto
+		foreach($data['pregunta_texto'] AS $key => $val)
+		{
+			$id_pregunta = $key;
+			foreach($data['pregunta_texto'][$id_pregunta] AS $seccion => $texto)
+			{
+				$insert = Array ("id_encuestado" => $id_encuestado,
+							   "id_pregunta" => $id_pregunta,
+							   "seccion" => $seccion,
+							   "respuesta" => $texto
+				);
+				$id = $db->insert ('users', $insert);	
+				if($id) $n++;
+			}
+			
+		}
+		
+		//Actualizamos el encuestado para que ni pueda rellenar más encuestas
+		$update = Array (
+			'terminada' => 1
+		);
+		$db->where ('id_encuestado', $id_encuestado);
+		$db->update ('encuestados', $update);
+		
+		return $n;
+	}
+	
 	public function resendCorreo($email)
 	{
 		//Comprobamos que el usuario está registrado

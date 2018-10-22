@@ -30,9 +30,12 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 		//Si se ha mandado la encuesta, la registramos
 		if($action == 'entregar')
 		{
+			$rellenadas = $encuesta->rellenarEncuesta($_POST);
+			echo "Se han inscrito $rellenadas respuestas en la base de datos".
 			echo "<PRE>";
 			print_r($_POST);
 			echo "</PRE>";
+		
 		}
 		
 		else

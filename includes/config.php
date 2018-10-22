@@ -11,7 +11,7 @@ c::set('cookie.user','lupUser');
 //La librería PHPMailer necesita un remitente con un dominio válido, o no funcionará
 c::set('mail.from','noreply@laultimapregunta.com'); //Remitente de los correos enviados automáticamente
 c::set('mail.fromName','Alhgo'); //Remitente de los correos enviados automáticamente
-c::set('mail.contact','noreply@laultimapregunta.com');
+c::set('mail.contact','contacto@laultimapregunta.com'); //Correo al que se mandará el formulario de contacto
 
 /*
 ---------------------
@@ -55,5 +55,9 @@ c::set('fb.storageBucket','storageBucket');
 c::set('fb.messagingSenderId','messagingSender');
 
 
+//Claves de la API de Google para insertar CPATCHA https://www.google.com/recaptcha/
+//Dejar vacío cualquiera de los valores y el script no se cargará
+c::set('captcha.site','reCaptacha.Site'); 
+c::set('captcha.secret','reCaptcha.Secret'); 
 
 ?>
