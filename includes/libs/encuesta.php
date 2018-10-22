@@ -239,7 +239,7 @@ class encuesta {
 		$encuesta .= $this->preguntaTipoTexto($preguntas[22], 4);
 		
 		
-		//Pregunta 5 (id 23)
+		//Pregunta 5 
 		$encuesta .= '<h5>5.- Valore del 1 al 5 la atención que, a su juicio, el actual Gobierno Municipal ha prestado a esos problemas, siendo 1 la menor atención y 5 la mayor:</h5>';
 		$encuesta .= '<table class="table table-striped">';
 		$encuesta .= $this->preguntaTableHead("Problema",5,6);
@@ -248,16 +248,45 @@ class encuesta {
 		{
 			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
 		}
+		//Pregunta de enunciado abierto
+		$encuesta .= $this->preguntaTipoRadioVariable($preguntas[35]);
 		
 		$encuesta .= '</tbody>
 		</table>
 		<hr>';
 		
+		//Pregunta 6 (id 36)
+		$encuesta .= $this->preguntaTipoTexto($preguntas[36], 6);
+		
+		//Pregunta 7
+		$encuesta .= '<h5>7.- Indique cómo de prioritarias son en su opinión las siguientes responsabilidades de la gestión municipal:</h5>';
+		$encuesta .= '<table class="table table-striped">';
+		$encuesta .= $this->preguntaTableHead("Área de responsabilidad",6,5);
+		//Por cada opción de la pregunta 7 (desde el ID 37 hasta el 50)
+		for($n=37;$n<=50;$n++)
+		{
+			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
+		}
+		
+		$encuesta .= '</tbody>
+		</table>
+		<hr>';
+		
+		//Pregunta 8 (id 51)
+		$encuesta .= $this->preguntaTipoTexto($preguntas[51], 8);
+		
+		
 		$encuesta .= '<hr>
+		<div class="checkbox">
+		  <label><input type="checkbox" name="suscriptor" value="si"> Esta encuesta es anónima, pero si quieres recibir información periódica de nuestras propuestas y actuaciones marca este recuadro.</label>
+		</div>
+		
 		<input type="hidden" name="id_encuestado" value="' . $id_encuestado . '">
 		<p><button type="submit" class="btn btn-primary" id="rellenar-button">Entregar</button></p>
 		</form>
-		<p class="mb-5">* Al enviar el formulario aceptas las condiciones de uso. Tus datos solo serán utilizados con fines estadísticos y nunca para comunicaciones posteriores, salvo que assí lo indiques.</p>';
+		<p class="mb-5">&nbsp;</p>
+
+		';
 		
 		return $encuesta;
 	}
@@ -304,6 +333,27 @@ class encuesta {
 		
 	}
 	
+	private function preguntaTipoRadioVariable($data, $num='')
+	{
+		$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
+			
+			$texto = '
+	<tr>
+      <th scope="row">&#9659; ' . $tit . '<br>
+	  <input type="text" name="pregunta_texto[' . $data['id_pregunta'] . '][]" class="form-control"></th>
+	';
+			foreach($data['opciones'] AS $key => $val)
+			{
+				$texto .= '
+	<td align="center">
+		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
+	</td>';
+			}
+		
+				
+		return $texto;
+	}
+	
 	private function preguntaTipoTexto($data,$num="")
 	{
 		$tit = ($num != '') ? $num . ".- " . $data['texto'] : $data['texto'];
@@ -321,11 +371,11 @@ class encuesta {
 	
 	private function preguntaTableHead($pregunta, $id_opt, $num_opt)
 	{
-		$colspan = $num_opt + 1;
+	
 		$txt = '
   <thead>
     <tr>
-		<th scope="col" colspan="' . $colspan . '">' . $pregunta . '</th>';
+		<th scope="col" >' . $pregunta . '</th>';
 		//Obtenemos las opciones de la ID pasada
 		$db = $this->db;
 		$db->where ('id_opt', $id_opt);
@@ -395,8 +445,10 @@ class encuesta {
 		}
 		
 		//Actualizamos el encuestado para que ni pueda rellenar más encuestas
+		$suscr = (isset($data['suscriptor'])) ? 1 : 0;
 		$update = Array (
-			'terminada' => 1
+			'terminada' => 1,
+			'suscriptor' => $suscr
 		);
 		$db->where ('id_encuestado', $id_encuestado);
 		$db->update ('encuestados', $update);
