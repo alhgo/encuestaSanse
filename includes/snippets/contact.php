@@ -7,7 +7,7 @@ $user = new Users;
 			<div class="row justify-content-center">
 				<div class="col-12 col-md-8 col-lg-6 pb-5">
                     <!--Contact Form-->
-					<form action="contact.php" method="post">
+					<form action="" method="post">
                         <div class="card border-primary rounded-0">
                             <div class="card-header p-0">
                                 <div class="bg-info text-white text-center py-2">
@@ -47,12 +47,13 @@ $user = new Users;
                                         <textarea class="form-control" placeholder="Tu consulta" name="consulta" required></textarea>
                                     </div>
                                 </div>
+								
 								<?php if(c::get('captcha.site') != '' && c::get('captcha.secret') != '') : ?>
 								<div class="form-group">
 									<div class="g-recaptcha" data-sitekey="<?= c::get('captcha.site') ?>" data-callback="recaptcha_callback"></div>
 								</div>
 								<?php endif ?>
-
+								
                                 <div class="text-center">
 									
                                     <input type="submit" value="Enviar" type="submit" class="btn btn-info btn-block rounded-0 py-2 cursor_none" id="contact-button" disabled>

@@ -630,7 +630,10 @@ window.onload = function() {
 //https://www.youtube.com/watch?v=okaZ6OIqlzs
 function recaptcha_callback(){
       //alert("callback working");
+	
 	console.log('listo');
       $('#contact-button').prop("disabled", false);
       $('#contact-button').removeClass( "cursor_none");
     }
+
+window.recaptcha_callback = recaptcha_callback;

@@ -190,7 +190,7 @@ window.onload = function() {
 		
 		//Por defecto no hay errores
 		var error = false;
-	    
+	    /*
 		//Si el nombre está vacio
 		if($('#r-name').val().trim() === '')
 		{
@@ -201,7 +201,7 @@ window.onload = function() {
 		{
 			markInputReg('name','', false);
 		}
-		
+		*/
 		//Si el correo no está validado o está vacío
 		if($('#validate-email').val() == 0 || $('#r-email').val() == '')
 		{

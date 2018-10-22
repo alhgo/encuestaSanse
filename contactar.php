@@ -16,9 +16,9 @@ if(isset($_POST['consulta']) && $_POST['consulta'] != '')
 	$mail->do_debug = 0;
 
 	//Datos del correo
-	if(isset($_POST['name']) && $_POST['name'] != '')
+	if(isset($_POST['nombre']) && $_POST['nombre'] != '')
 	{
-		$from = $_POST['name'];
+		$from = $_POST['nombre'];
 
 	}
 	else
@@ -28,11 +28,11 @@ if(isset($_POST['consulta']) && $_POST['consulta'] != '')
 	
 	$mail->setFrom($_POST['email'], $from);	
 	$mail->addAddress(c::get('mail.contact'),'Administrador del sitio');
-	$mail->Subject  = 'Solicitud de registro en ' . $site->title;
+	$mail->Subject  = 'Consulta enviada desde ' . $site->title;
 	$mail->isHTML(false); //Indicamos que NO es un correo HTML
 	$mail->CharSet = 'UTF-8'; //Convertimos los caracteres a UTF8
 	$mail->Body = "Consulta enviada:
-	Fecha: " . date('dd/mm/YY HH:ii:ss') . "
+	Fecha: " . date("Y-m-d H:i:s") . "
 	Nombre: " . $_POST['nombre'] . "
 	Correo: " . $_POST['email'] . "
 	
@@ -43,12 +43,12 @@ if(isset($_POST['consulta']) && $_POST['consulta'] != '')
 	try {
 		//Desactivamos los errores de la clase PHP Mailer
 		@$mail->send();
-		echo "Enviado";
+		$sent = true;
 	
 	} catch (Exception $e) {
 		//Insertamos un mensaje de error en el LOG
 		$error_msg = 'Se ha producido un error al enviar el correo de contacto. Código de error: ' . $mail->ErrorInfo;
-		echo $error_msg;
+		$sent = false;
 		log::putErrorLog($error_msg);
 
 	} 
@@ -61,12 +61,41 @@ if(isset($_POST['consulta']) && $_POST['consulta'] != '')
 
 <body>
 
-<?php snippet('nav.php',['menu' => array('Página oficial' => 'http://www.izquierdaindependiente.es', 'Contactar' => 'contact.php'), 'site' => $site, 'user' => $user]); ?>
+<?php snippet('nav.php',['menu' => array('Página oficial' => 'http://www.izquierdaindependiente.es', 'Contactar' => 'contactar.php'), 'site' => $site, 'user' => $user]); ?>
 
 	<div class="container mt-3">
 		
 		<?php
+			if(isset($sent))
+			{
+				if($sent === true)
+				{
+					echo '
+			<div class="row justify-content-center">
+				<div class="col-12 col-md-8 col-lg-6 pb-5">
+					<div class="alert alert-success" role="alert">
+  						La consulta se ha enviado correctamente.
+					</div>
+				</div>
+			</div>';
+				}
+				else if($sent === false)
+				{
+					echo '
+			<div class="row justify-content-center">
+				<div class="col-12 col-md-8 col-lg-6 pb-5">
+					<div class="alert alert-danger" role="alert">
+  						Lo sentimos. Se ha producido un error y la consult ano ha podido enviarse correctamente.
+					</div>
+				</div>
+			</div>';
+				}
+			}
+		else
+		{
 			snippet('contact.php');
+		}
+			
 		?>
 	
 

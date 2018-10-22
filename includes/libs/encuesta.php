@@ -321,10 +321,11 @@ class encuesta {
 	
 	private function preguntaTableHead($pregunta, $id_opt, $num_opt)
 	{
+		$colspan = $num_opt + 1;
 		$txt = '
   <thead>
     <tr>
-		<th scope="col">' . $pregunta . '</th>';
+		<th scope="col" colspan="' . $colspan . '">' . $pregunta . '</th>';
 		//Obtenemos las opciones de la ID pasada
 		$db = $this->db;
 		$db->where ('id_opt', $id_opt);
@@ -354,6 +355,11 @@ class encuesta {
 		$db = $this->db;
 		$id_encuestado = $data['id_encuestado'];
 		
+		//Comprobamos que el usuario no haya rellenado ya la encuesta
+		$db->where('id_encuestado',$id_encuestado);
+		$encuestado = $db->getOne('encuestados');
+		if($encuestado['terminada'] == 1) return false;
+		
 		//Ponemos el $error a 0
 		$error = false;
 		$n = 0;
@@ -374,13 +380,16 @@ class encuesta {
 			$id_pregunta = $key;
 			foreach($data['pregunta_texto'][$id_pregunta] AS $seccion => $texto)
 			{
-				$insert = Array ("id_encuestado" => $id_encuestado,
-							   "id_pregunta" => $id_pregunta,
-							   "seccion" => $seccion,
-							   "respuesta" => $texto
-				);
-				$id = $db->insert ('users', $insert);	
-				if($id) $n++;
+				if(trim($texto) != '')
+				{
+					$insert = Array ("id_encuestado" => $id_encuestado,
+								   "id_pregunta" => $id_pregunta,
+								   "seccion" => $seccion,
+								   "respuesta" => $texto
+					);
+					$id = $db->insert ('respuestas_largas', $insert);	
+					if($id) $n++;
+				}
 			}
 			
 		}

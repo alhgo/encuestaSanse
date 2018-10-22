@@ -15,7 +15,7 @@ $zonas = $encuesta->getZonas();
 			  <div class="form-row">
 
 			  	<div class="form-group col-md-6">
-				  <label for="r-name"  class="form-label">Nombre</label>
+				  <label for="r-name"  class="form-label">Nombre (opcional)</label>
 				  <input type="text" class="form-control" id="r-name" name="r-name"  maxlength="150">
 				  <div class="invalid-feedback" id="fb-name"></div>
 				</div>
@@ -79,12 +79,13 @@ $zonas = $encuesta->getZonas();
 			  <input type="hidden" id="registered" name="registered" value="<?= time() ?>">
 			  
 			  <span class="btn btn-primary" id="register-button">Validar correo</span>
+				<p class="small">* Para evitar que una misma persona rellene varias encuestas, deberás validar tu dirección de correo antes de poder rellenarla.</p>
 			</form>
 		</div>
 	</div>
 <hr>
 <p>¿Ya has solicitado la validación del correo y no has recibido el correo de confirmación? <a href="#" data-toggle="modal" data-target="#rememberModal">Pincha aquí</a></p>
-<p>* Tus datos solo se usarán para la realización de la encuesta, a menos que nos solicites lo contrario.</p>
+
 
 
 
