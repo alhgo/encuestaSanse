@@ -15,7 +15,7 @@ $action = (isset($_GET['action'])) ? $_GET['action'] : '';
 
 <?php snippet('nav.php',['menu' => array('Página oficial' => 'http://www.izquierdaindependiente.es', 'Contactar' => 'contactar.php'), 'site' => $site, 'user' => $user]); ?>
 
-	<div class="container mt-3">
+	<div class="container mt-3" id="map">
 		
 		<?php
 		if($action == 'registerUser')

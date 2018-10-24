@@ -8,8 +8,10 @@ $site = new Site;
 
 //Si el usuario no es administrador, lo sacamos de la página
 if(!$user->logged || !$user->is_admin) {
-	url::go('logout.php?error=no_admin');
+	url::go('logout.php?url=admin.php&error=no_admin');
 }
+
+$action = (isset($_GET['action'])) ? $_GET['action'] : '';
 
 
 ?>
@@ -18,19 +20,41 @@ if(!$user->logged || !$user->is_admin) {
 
 <body>
 
-<?php snippet('nav.php',['menu' => array('Menú 1' => 'menu1.html', 'Menú 2' => 'menu2.html'), 'site' => $site, 'user' => $user]); ?>
+<?php snippet('nav.php',['menu' => array('Página oficial' => 'http://www.izquierdaindependiente.es', 'contactar' => 'contactar.php'), 'site' => $site, 'user' => $user]); ?>
+	
+	
+	<div class="container p-0 m-0">
+		
+		<!-- Bootstrap row -->
+		<div class="row" id="body-row">
+			
+			<?php snippet('admin/sidebar.php',['user' => $user]) ?>
+			<!-- MAIN -->
+			<div class="col ">
+				<?php 
+				if($action == 'encuestados')
+				{
+					snippet('admin/encuestados.php');
+				}
+				else if($action == 'stats')
+				{
+					snippet('admin/stats.php');
+				}
+				else
+				{
+					snippet('admin/admin_home.php'); 
+				}
+				?>
 
-	<div class="container-fluid p-0 m-0">
+			</div><!-- Main Col END -->
+
+		</div><!-- body-row END -->
 		
-		<?php snippet('breadcrumb.php',array('data' => ['Admin' => 'admin.php'])); ?>
-	</div>
-	<div class="container">
-		
-		<?php snippet('admin/admin_home.php'); ?>
 
 	</div>
 	
-<?php snippet('footer.php', ['libs' => array('forms.js')]); ?>
+	
+<?php snippet('footer.php', ['libs' => array('admin.js')]); ?>
 
 </body>
 </html>

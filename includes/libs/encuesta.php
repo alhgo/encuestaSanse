@@ -53,8 +53,13 @@ class encuesta {
 		}
 	}
 	
-	public function encuestadoCheck($id,$token)
+	public function encuestadoCheck($id='',$token='')
 	{
+		if(trim($id) == '' || trim($token) == '')
+		{
+			throw new Exception("Los datos del enlace no son correctos");
+		}
+		
 		$db = $this->db;
 		//$db->where ('id_encuestado', $id);
 		//$db->where ('token', $token);
@@ -139,7 +144,7 @@ class encuesta {
 		//echo $url_confirm;
 		$button = $body->bodyButton($url_confirm,"Realizar encuesta");
 		$body->bodyContent = "
-							<p>Se ha recibido la solicitud para realizar la encuesta de " . $site->title . ". Visite el siguiente enlace para acceder a la encuesta online $url_confirm </p>
+							<p>Se ha recibido la solicitud para participar en la '" . $site->title . "'. Visite el siguiente enlace para acceder a la encuesta online $url_confirm </p>
 							" . $button . "";
 		$body->getBodyHTML();
 
@@ -184,8 +189,8 @@ class encuesta {
 		}
 		
 		//Creamos el texto de la encuesta
-		$encuesta = '<h1>Rellenar la encuesta</h1>
-		<h6>' . $encuestado['nombre'] . '</h6>
+		$encuesta = '<h2>Rellenar la encuesta</h2>
+		<h6>' . $encuestado['nombre'] . '(' . $encuestado['correo'] . ')</h6>
 		<hr>
 		<form action="encuesta.php?action=entregar" method="post" id="form-encuesta">';
 		
@@ -319,7 +324,7 @@ class encuesta {
 			foreach($data['opciones'] AS $key => $val)
 			{
 				$texto .= '
-	<td align="center">
+	<td>
 		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
 	</td>';
 			}
@@ -345,7 +350,7 @@ class encuesta {
 			foreach($data['opciones'] AS $key => $val)
 			{
 				$texto .= '
-	<td align="center">
+	<td>
 		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
 	</td>';
 			}
@@ -384,7 +389,7 @@ class encuesta {
 		{
 			for($n=1; $n<=$num_opt;$n++)
 			{
-				$txt .= '<th scope="col">' . $result['opt_' . $n] . '</th>';
+				$txt .= '<th scope="col" class="text-center">' . $result['opt_' . $n] . '</th>';
 			}
 		}
 		
@@ -408,52 +413,56 @@ class encuesta {
 		//Comprobamos que el usuario no haya rellenado ya la encuesta
 		$db->where('id_encuestado',$id_encuestado);
 		$encuestado = $db->getOne('encuestados');
-		if($encuestado['terminada'] == 1) return false;
-		
-		//Ponemos el $error a 0
-		$error = false;
-		$n = 0;
-		//Insertamos las respuestas tipo radio
-		foreach($data['pregunta'] AS $key => $val)
-		{
-			$insert = Array ("id_encuestado" => $id_encuestado,
-						   "id_pregunta" => $key,
-						   "opt" => $val
-			);
-			$id = $db->insert ('respuestas', $insert);
-			if($id) $n++;
+		if($encuestado['terminada'] == 1){
+			throw new Exception("El usuario al que corresponde este enlace ya ha realizado la encuesta.");
+			return 0;
 		}
-		
-		//Insertamos las respuestas tipo texto
-		foreach($data['pregunta_texto'] AS $key => $val)
-		{
-			$id_pregunta = $key;
-			foreach($data['pregunta_texto'][$id_pregunta] AS $seccion => $texto)
+		else {
+
+			//Ponemos el contador a 0
+			$n = 0;
+			//Insertamos las respuestas tipo radio
+			foreach($data['pregunta'] AS $key => $val)
 			{
-				if(trim($texto) != '')
-				{
-					$insert = Array ("id_encuestado" => $id_encuestado,
-								   "id_pregunta" => $id_pregunta,
-								   "seccion" => $seccion,
-								   "respuesta" => $texto
-					);
-					$id = $db->insert ('respuestas_largas', $insert);	
-					if($id) $n++;
-				}
+				$insert = Array ("id_encuestado" => $id_encuestado,
+							   "id_pregunta" => $key,
+							   "opt" => $val
+				);
+				$id = $db->insert ('respuestas', $insert);
+				if($id) $n++;
 			}
-			
+
+			//Insertamos las respuestas tipo texto
+			foreach($data['pregunta_texto'] AS $key => $val)
+			{
+				$id_pregunta = $key;
+				foreach($data['pregunta_texto'][$id_pregunta] AS $seccion => $texto)
+				{
+					if(trim($texto) != '')
+					{
+						$insert = Array ("id_encuestado" => $id_encuestado,
+									   "id_pregunta" => $id_pregunta,
+									   "seccion" => $seccion,
+									   "respuesta" => $texto
+						);
+						$id = $db->insert ('respuestas_largas', $insert);	
+						if($id) $n++;
+					}
+				}
+
+			}
+
+			//Actualizamos el encuestado para que ni pueda rellenar más encuestas
+			$suscr = (isset($data['suscriptor'])) ? 1 : 0;
+			$update = Array (
+				'terminada' => 1,
+				'suscriptor' => $suscr
+			);
+			$db->where ('id_encuestado', $id_encuestado);
+			$db->update ('encuestados', $update);
+
+			return $n;
 		}
-		
-		//Actualizamos el encuestado para que ni pueda rellenar más encuestas
-		$suscr = (isset($data['suscriptor'])) ? 1 : 0;
-		$update = Array (
-			'terminada' => 1,
-			'suscriptor' => $suscr
-		);
-		$db->where ('id_encuestado', $id_encuestado);
-		$db->update ('encuestados', $update);
-		
-		return $n;
 	}
 	
 	public function resendCorreo($email)
@@ -488,5 +497,28 @@ class encuesta {
 		}
 		
 	}
+	
+	//Resultados de las encuestas
+	public function getEncuestadosResults()
+	{
+		$db = $this->db;
+		$encuestados = $db->get('encuestados');
+		
+		return $encuestados;
+		
+	}
+	
+	public function getRespuestasResults()
+	{
+		$db = $this->db;
+		$respuestas = array();
+		
+		$respuestas['radio'] = $db->get('respuestas');
+		$respuestas['texto'] = $db->get('respuestas_largas');
+		
+		return $respuestas;
+		
+	}
+	
 	
 }

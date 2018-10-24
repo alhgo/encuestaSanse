@@ -25,16 +25,29 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 		<?php snippet('breadcrumb.php',array('data' => ['Inicio' => 'index.php', 'Encuesta' => ''])); ?>
 	</div>
 	<div class="container mt-3">
-		
+		<h1>Encuesta</h1>
+		<hr>
 		<?php
 		//Si se ha mandado la encuesta, la registramos
 		if($action == 'entregar')
 		{
-			$rellenadas = $encuesta->rellenarEncuesta($_POST);
-			echo "Se han inscrito $rellenadas respuestas en la base de datos";
-			echo "<PRE>";
+			try {
+				$rellenadas = $encuesta->rellenarEncuesta($_POST);
+				echo '<div class="alert alert-success" role="alert">
+  <strong>¡Gracias!.</strong> La encuesta se ha registrado correctamente.</div>';
+				
+				echo "<p>Se han inscrito $rellenadas respuestas contestadas</p>";
+				
+			} catch (Exception $e) {
+				
+				echo '<div class="alert alert-warning" role="alert">
+  <strong>Error.</strong> ' . $e->getMessage() . '</div>';
+			}
+			
+			
+			echo "<!--";
 			print_r($_POST);
-			echo "</PRE>";
+			echo "-->";
 		
 		}
 		
@@ -42,7 +55,7 @@ $token = (isset($_GET['t']) ? $_GET['t'] : '');
 		{
 			//Si se ha pasado un token incorrecto o si el usuario ya ha rellenado la encuesta
 			try {
-				//Desactivamos los errores de la clase PHP Mailer
+				
 				$encuesta->encuestadoCheck($id_user, $token);
 				
 				echo $encuesta->mostrarEncuesta($id_user);

@@ -37,6 +37,18 @@ $current = basename( $_SERVER[ 'PHP_SELF' ] );
 				</li>
 				<?php endforeach ?>
 				<?php endif ?>
+				<?php if($user->is_admin) : ?>
+					<li class="nav-item<?= ($current == 'admin.php') ? ' active' : '' ?>">
+						<a class="nav-link" href="admin.php"><i class="fa fa-cogs"></i>
+						<?php if($current == 'admin.php') : ?>
+						<span class="sr-only">(current)</span>
+						<?php endif ?>
+						</a>
+					</li>
+				<?php endif ?>
+				
+				
+				
 				<?php if(c::get('use.database')) : ?>
 					<!--User menu-->
 					<?php if($user->logged) : ?>

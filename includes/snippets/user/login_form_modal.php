@@ -6,7 +6,7 @@
     <div class="modal-content">
 
         
-		  <?php snippet('user/login_form.php') ?>
+		  <?php snippet('user/login_form.php', ['close_button' => 'true']) ?>
 
       
     </div>

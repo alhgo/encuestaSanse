@@ -1,7 +1,7 @@
 <?php
 $n = 1;
 ?>
-		<div class="pt-0">
+		<div class="pt-2 container">
 			<nav aria-label="breadcrumb">
 	  			<ol class="breadcrumb">
 		  		<?php foreach($data AS $key => $value) : ?>

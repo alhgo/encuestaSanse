@@ -6,7 +6,7 @@ $error = '';
 //Comprobamos que el correo del usuario no está ya registrado
 if($encuesta->encuestadoExists($_POST['r-email']))
 {
-	$error = "El correo que ha introducido ya está registrado. Solicite de nuevo el enlace para realizar la encuesta o póngase en contacto con el administrador.";
+	$error = "El correo que ha introducido ya está registrado. Si ha enviado el formulario de validación de correo dos veces por error, solicite de nuevo el enlace desde la página inicial o póngase en contacto con nosotros.";
 }
 else
 {
@@ -20,7 +20,7 @@ else
 		}
 
 	} catch (Exception $e) {
-		$error = "Se ha producido un error al registrar sus datos. Pruébelo más tarde o póngase en contacto con el administrador del sitio.";
+		$error = "Se ha producido un error al registrar sus datos. Pruébelo más tarde o póngase en contacto con nosotros.";
 	}
 }
 
@@ -29,6 +29,7 @@ else
 
 ?>
 <h1>Solicitud para realizar la encuesta</h1>
+<hr>
 <?php if($error != '') : ?>
 <p class="text-danger">
 ERROR: <?= $error ?>

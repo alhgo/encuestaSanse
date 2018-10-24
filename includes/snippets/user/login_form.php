@@ -1,7 +1,7 @@
 	<!-- Modal Header -->
 	<div class="modal-header">
 		<h4>Formulario de inicio de sesión</h4>
-		<?php if(!isset($_GET['action']) ||  $_GET['action'] != 'loginUser') : ?>
+		<?php if(isset($close_button)) : ?>
 		<button type="button" class="close" data-dismiss="modal">&times;</button>
 		<?php endif ?>
 	</div>
@@ -30,13 +30,22 @@
 			<div class="alert alert-success" id="msg_success" style="display: none">
 				<strong>¡Bien!</strong> <span id="span_success"></span></a>
 			</div>
+	<?php
+	//Variables ocultas
+	foreach($_GET AS $key => $value){
+		echo '
+		<input type="hidden" id="' . $key . '" value="' . $value . '">';
+	}
+	?>
+	
 			<span class="btn btn-primary" id="login-button">Aceptar</span>
 		  </form>
 		</p>
 	</div>
-	
+	<?php if(c::get('use.database')) : ?>
 	<!-- Modal footer -->
       <div class="modal-footer" style="display: block">
        	<p><a href="user.php?action=register">¿No estás registrado?</a> - <a href="user.php?action=rememberPass">¿Olvidaste tu contraseña?</a></p>
         <!--<button type="button" class="btn btn-danger" data-dismiss="modal"><Cerrar></Cerrar></button>-->
       </div>
+	<?php endif ?>
