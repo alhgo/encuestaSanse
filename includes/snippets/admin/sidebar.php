@@ -36,7 +36,7 @@
                 <div class="d-flex w-100 justify-content-start align-items-center">
                     <span class="fa fa-signal fa-fw mr-3"></span>
                     <span class="menu-collapsed">
-						Estadísticas
+						Resultados
 					</span>   
                       
                 </div>

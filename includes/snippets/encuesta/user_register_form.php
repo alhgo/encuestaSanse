@@ -26,6 +26,7 @@ $zonas = $encuesta->getZonas();
 					  <div class="input-group-text"><span class="badge badge-pill " id="badge-email"><i class="fa" id="i-email"></i></span></div>
 					</div>
 					<input type="text" class="form-control " name="r-email" id="r-email" maxlength="150">
+					<p class="small m-0">No será usado para otro fin distinto al de la validación de la encuesta.</p>
 				  </div>
 				  <div class="invalid-feedback" id="fb-email"></div>
 				</div>
@@ -60,6 +61,11 @@ $zonas = $encuesta->getZonas();
 						<div class="form-check-inline">
 						  <label class="form-check-label" for="radio2">
 							<input type="radio" class="form-check-input" id="radio2" name="r-sexo" value="M">Mujer
+						  </label>
+						</div>
+						<div class="form-check-inline">
+						  <label class="form-check-label" for="radio2">
+							<input type="radio" class="form-check-input" id="radio3" name="r-sexo" value="O">Otro
 						  </label>
 						</div>
 				  <div class="invalid-feedback pt-2" id="fb-sexo"></div>

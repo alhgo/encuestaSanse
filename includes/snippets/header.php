@@ -29,6 +29,9 @@
 	<!-- Scrollbar Custom CSS 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">-->
 	  
+	  <!--Charts js-->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+	  
 	<?php if(c::get('use.firebase',false)) : ?>
 	<!--Firebase-->
 	<script src="https://www.gstatic.com/firebasejs/5.4.0/firebase.js"></script>

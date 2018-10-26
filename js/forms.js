@@ -104,9 +104,18 @@ window.onload = function() {
 						//Ocultamos el botón de aceptar
 						$('#login-button').hide();
 						
-		            	//Redirigimos a la página principal
+		            	//Redirigimos a la página principal o a la que se ha especificado
+						if($('#url').val())
+							{
+								site_redirect = siteUrl + $('#url').val();
+							}
+						else
+							{
+								site_redirect = siteUrl;
+							}
+						console.log(site_redirect);
 						 window.setTimeout(function(){
-							window.location.href = siteUrl;
+							window.location.href = site_redirect;
 						}, 3000);
 
 						

@@ -34,11 +34,11 @@ $action = (isset($_GET['action'])) ? $_GET['action'] : '';
 				<?php 
 				if($action == 'encuestados')
 				{
-					snippet('admin/encuestados.php');
+					snippet('admin/admin_encuestados.php');
 				}
 				else if($action == 'stats')
 				{
-					snippet('admin/stats.php');
+					snippet('admin/admin_resultados.php');
 				}
 				else
 				{

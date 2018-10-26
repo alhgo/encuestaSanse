@@ -179,21 +179,9 @@ class encuesta {
 		} 
 	}
 	
-	public function mostrarEncuesta($id_encuestado)
+	public function getPreguntas()
 	{
 		$db = $this->db;
-		//Obtenemos los datos del encuestado
-		$db->where ("id_encuestado", $id_encuestado);
-		if(!$encuestado = $db->getOne("encuestados")){
-			die('Error al obtener los datos el encuestado');
-		}
-		
-		//Creamos el texto de la encuesta
-		$encuesta = '<h2>Rellenar la encuesta</h2>
-		<h6>' . $encuestado['nombre'] . '(' . $encuestado['correo'] . ')</h6>
-		<hr>
-		<form action="encuesta.php?action=entregar" method="post" id="form-encuesta">';
-		
 		
 		//OBtenemos todas las preguntas
 		$p = $db->get('preguntas');
@@ -219,13 +207,34 @@ class encuesta {
 				
 			}
 		}
+		
 		//print_r($preguntas);
+		return $preguntas;
+	}
+	
+	public function mostrarEncuesta($id_encuestado)
+	{
+		$db = $this->db;
+		//Obtenemos los datos del encuestado
+		$db->where ("id_encuestado", $id_encuestado);
+		if(!$encuestado = $db->getOne("encuestados")){
+			die('Error al obtener los datos el encuestado');
+		}
+		
+		//Creamos el texto de la encuesta
+		$encuesta = '<h3>Responder a las preguntas que aparecen a continuación.</h3>
+		<h6>Usuario: ' . $encuestado['nombre'] . '(' . $encuestado['correo'] . ')</h6>
+		<hr class="style-one">
+		<form action="encuesta.php?action=entregar" method="post" id="form-encuesta">';
+		
+		
+		$preguntas = $this->getPreguntas();
 		
 		//Construimos la encuesta
 		$encuesta .= $this->preguntaTipoRadio($preguntas[1], 1);
-		$encuesta .= '<hr>';
+		$encuesta .= '<hr class="style-one">';
 		$encuesta .= $this->preguntaTipoRadio($preguntas[2], 2);
-		$encuesta .= '<hr>';
+		$encuesta .= '<hr class="style-one">';
 		//Pregunta 3
 		$encuesta .= '<h5>3.- Responda si está de acuerdo, o no con las siguientes frases:</h5>';
 		$encuesta .= '<table class="table table-striped">';
@@ -238,11 +247,12 @@ class encuesta {
 		
 		$encuesta .= '</tbody>
 		</table>
-		<hr>';
+		<hr class="style-one">';
 		
 		//Pregunta 4 (id 22)
 		$encuesta .= $this->preguntaTipoTexto($preguntas[22], 4);
 		
+		$encuesta .= '<hr class="style-one">';
 		
 		//Pregunta 5 
 		$encuesta .= '<h5>5.- Valore del 1 al 5 la atención que, a su juicio, el actual Gobierno Municipal ha prestado a esos problemas, siendo 1 la menor atención y 5 la mayor:</h5>';
@@ -258,10 +268,12 @@ class encuesta {
 		
 		$encuesta .= '</tbody>
 		</table>
-		<hr>';
+		<hr class="style-one">';
 		
 		//Pregunta 6 (id 36)
 		$encuesta .= $this->preguntaTipoTexto($preguntas[36], 6);
+		
+		$encuesta .= '<hr class="style-one">';
 		
 		//Pregunta 7
 		$encuesta .= '<h5>7.- Indique cómo de prioritarias son en su opinión las siguientes responsabilidades de la gestión municipal:</h5>';
@@ -275,7 +287,7 @@ class encuesta {
 		
 		$encuesta .= '</tbody>
 		</table>
-		<hr>';
+		<hr class="style-one">';
 		
 		//Pregunta 8 (id 51)
 		$encuesta .= $this->preguntaTipoTexto($preguntas[51], 8);
@@ -324,8 +336,8 @@ class encuesta {
 			foreach($data['opciones'] AS $key => $val)
 			{
 				$texto .= '
-	<td>
-		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
+	<td class="text-center">
+		<input type="radio" class="form-check-input ml-0" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
 	</td>';
 			}
 			
@@ -345,13 +357,14 @@ class encuesta {
 			$texto = '
 	<tr>
       <th scope="row">&#9659; ' . $tit . '<br>
-	  <input type="text" name="pregunta_texto[' . $data['id_pregunta'] . '][]" class="form-control"></th>
-	';
+	  <div class="col-12">
+	  	<input type="text" name="pregunta_texto[' . $data['id_pregunta'] . '][]" class="form-control form-control-sm"></th>
+	  </div>';
 			foreach($data['opciones'] AS $key => $val)
 			{
 				$texto .= '
-	<td>
-		<input type="radio" class="form-check-input" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
+	<td class="text-center">
+		<input type="radio" class="form-check-input ml-0" name="pregunta[' . $data['id_pregunta'] . ']" value="' . $key . '" title="' . $val . '">
 	</td>';
 			}
 		
@@ -393,8 +406,6 @@ class encuesta {
 			}
 		}
 		
-		
-      
       
       $txt .= '
     </tr>
@@ -499,26 +510,146 @@ class encuesta {
 	}
 	
 	//Resultados de las encuestas
-	public function getEncuestadosResults()
+	public function getEncuestadosResults($id_encuestado='')
 	{
 		$db = $this->db;
+		$return = array();
+		if($id_encuestado != '') $db->where('id_encuestado',$id_encuestado);
 		$encuestados = $db->get('encuestados');
 		
-		return $encuestados;
+		//Por cada encuestado obtenemos el número de respuestas dadas
+		foreach($encuestados AS $key => $value)
+		{
+			$return[$value['id_encuestado']] = [
+				'id_encuestado' => $value['id_encuestado'],
+				'nombre' => $value['nombre'],
+				'correo' => $value['correo'],
+				'registered' => $value['registered'],
+				'sexo' => $value['sexo'],
+				'edad' => $value['edad'],
+				'id_zona' => $value['id_zona'],
+				'terminada' => $value['terminada'],
+				'suscriptor' => $value['suscriptor'],
+				'respuestas' => array()
+			];
+			
+			//Obtenemos el nº de respuestas dadas de tipo radio
+			$db->where('id_encuestado',$value['id_encuestado']);
+			$db->get('respuestas');
+			$return[$value['id_encuestado']]['respuestas']['radio'] = $db->count;
+			//Obtenemos el nº de respuestas dadas de tipo desarrollo
+			$db->where('id_encuestado',$value['id_encuestado']);
+			$db->get('respuestas_largas');
+			$return[$value['id_encuestado']]['respuestas']['texto'] = $db->count;
+		}
+		
+		return $return;
 		
 	}
 	
-	public function getRespuestasResults()
+	public function getRespuestasResults($id_pregunta='')
 	{
+		$db = $this->db;
+		//Obtenemos las preguntas
+		$preguntas = $this->getPreguntas();
+		
+		$resultados = ['radio' => array(),'texto' => array()];
+		//Por cada pregunta, obtenemos los resultados
+		foreach($preguntas AS $id => $data)
+		{
+			//Preguntas de respuesta cerrada
+			if($data['tipo'] == 1)
+			{
+				$resultados['radio'][$id] = [
+					'texto' => $data['texto'],
+					'resultados' => array()
+				];
+				//Obtenemos los resultados
+				foreach($data['opciones'] AS $id_opt => $text_opt)
+				{
+					//Obtenemos el número de respuestas
+					$db->where('id_pregunta',$id);
+					$db->where('opt',$id_opt);
+					$db->get('respuestas');
+					//Añadimos el resultado al array
+					$resultados['radio'][$id]['resultados'][$text_opt] = $db->count;
+				}
+			}
+			else if($data['tipo'] == 2)
+			{
+				$resultados['texto'][$id] = array();
+				//Buscamos las respuestas dadas a esa pregunta
+				
+			}
+			
+		}
+		
+		//print_r($resultados);
+		/*
 		$db = $this->db;
 		$respuestas = array();
 		
 		$respuestas['radio'] = $db->get('respuestas');
 		$respuestas['texto'] = $db->get('respuestas_largas');
-		
-		return $respuestas;
+		*/
+		return $resultados;
 		
 	}
 	
 	
+}
+
+class charts {
+	
+	public function showChart($domId, $data)
+	{
+		//Construimos las opciones
+		$options = "[";
+		$values = "[";
+		foreach($data['resultados'] AS $texto => $resultado)
+		{
+			$options .= '"' . $texto . '",';
+			$values .= $resultado . ',';
+		}
+		$options .= "]";
+		$values .= "]";
+		
+		$txt = 'var ctx = document.getElementById("' . $domId . '").getContext(\'2d\');
+var myChart = new Chart(ctx, {
+    type: \'pie\',
+    data: {
+        labels: ' . $options . ',
+        datasets: [{
+            label: \'# of Votes\',
+            data: ' . $values . ',
+            backgroundColor: [
+                \'rgba(255, 99, 132, 0.7)\',
+                \'rgba(54, 162, 235, 0.7)\',
+                \'rgba(255, 206, 86, 0.7)\',
+                \'rgba(75, 192, 192, 0.7)\',
+                \'rgba(153, 102, 255, 0.7)\',
+                \'rgba(255, 159, 64, 0.7)\'
+            ],
+            borderColor: [
+                \'rgba(255,99,132,1)\',
+                \'rgba(54, 162, 235, 1)\',
+                \'rgba(255, 206, 86, 1)\',
+                \'rgba(75, 192, 192, 1)\',
+                \'rgba(153, 102, 255, 1)\',
+                \'rgba(255, 159, 64, 1)\'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+		title: {
+            display: true,
+            text: \'' . $data['texto'] . '\'
+        }
+    }
+});
+';
+
+return $txt;
+	}
 }
