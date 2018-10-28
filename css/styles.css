@@ -10,6 +10,37 @@ body {
 	}
 }
 
+/* Tooltip */
+/* Tooltip container */
+.toolt {
+    position: relative;
+    display: inline-block;
+	cursor: pointer;
+    /*border-bottom: 1px dotted black;  If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.toolt .toolttext {
+    visibility: hidden;
+    width: 160px;
+	
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    padding: 5px;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+	font-size: 0.8em;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.toolt:hover .toolttext {
+    visibility: visible;
+}
+
 /* Sticky footer styles http://getbootstrap.com/docs/4.1/examples/sticky-footer-navbar/ */
 html {
 		position: relative;

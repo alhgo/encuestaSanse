@@ -57,7 +57,7 @@ c::set('fb.messagingSenderId','messagingSender');
 
 //Claves de la API de Google para insertar CPATCHA https://www.google.com/recaptcha/
 //Dejar vacío cualquiera de los valores y el script no se cargará
-c::set('captcha.site','reCaptacha.Site'); 
-c::set('captcha.secret','reCaptcha.Secret'); 
+c::set('captcha.site','6LezGXYUAAAAAJV3Q1L8zpKJvQd4LsJw4QAJAMPf'); 
+c::set('captcha.secret','6LezGXYUAAAAAFsS0Czd1z4y_AWtqFIZNA34decJ'); 
 
 ?>

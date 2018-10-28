@@ -31,17 +31,22 @@ foreach($z AS $key => $val)
 		</thead>
 		<tbody>
 		<?php foreach($encuestados AS $id => $data) : ?>
-			<?php $datos = "Datos del encuestado:
-ID: " . $data['id_encuestado'] . "
-Edad: " . $data['edad'] . "
-Sexo: " . $data['sexo'] . "
-Zona: " . $zonas[$data['id_zona']] . "
+			<?php $datos = "Datos del encuestado:<br>
+ID: " . $data['id_encuestado'] . "<br>
+Edad: " . $data['edad'] . "<br>
+Sexo: " . $data['sexo'] . "<br>
+Zona: " . $zonas[$data['id_zona']] . "<br>
 Fecha de registro: " . date('d/m/Y H:i:s',$data['registered']) . "
 ";
 			?>
 			<tr>
 				<th scope="row"><?= $data['nombre'] . ' - ' . $data['correo'] ?></th>
-				<td class="text-center"><a href="#" class="fa fa-info-circle" title="<?= $datos ?>"></a></td>
+				<td class="text-center">
+					<div class="toolt">
+						<a class="fa fa-info-circle"></a>
+ 						 <span class="toolttext"><?= $datos ?></span>
+					</div>
+				</td>
 				<td class="text-center"><span class="fa fa-<?php echo ($data['terminada'] == 1) ? 'check-circle' : 'times-circle text-danger' ?>"></span></td>
 				<td class="text-center"><span class="fa fa-<?php echo ($data['suscriptor'] == 1) ? 'check-circle' : 'times-circle text-danger' ?>"></span></td>
 				

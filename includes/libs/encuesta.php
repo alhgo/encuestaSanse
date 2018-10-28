@@ -243,6 +243,10 @@ class encuesta {
 		for($n=3;$n<=21;$n++)
 		{
 			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
+			//Si alcanzamos las 7 preguntas, volvemos a poner el encabezado
+			if(($n-2)%7==0){
+				$encuesta .= $this->preguntaTableHead("",3,5);
+			}
 		}
 		
 		$encuesta .= '</tbody>
@@ -262,6 +266,10 @@ class encuesta {
 		for($n=23;$n<=34;$n++)
 		{
 			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
+			//Si alcanzamos las 7 preguntas, volvemos a poner el encabezado
+			if(($n-22)%7==0){
+				$encuesta .= $this->preguntaTableHead("",5,6);
+			}
 		}
 		//Pregunta de enunciado abierto
 		$encuesta .= $this->preguntaTipoRadioVariable($preguntas[35]);
@@ -283,6 +291,10 @@ class encuesta {
 		for($n=37;$n<=50;$n++)
 		{
 			if(isset($preguntas[$n])) $encuesta .= $this->preguntaTipoRadio($preguntas[$n],'',true);
+			//Si alcanzamos las 7 preguntas, volvemos a poner el encabezado
+			if(($n-36)%7==0){
+				$encuesta .= $this->preguntaTableHead("",6,5);
+			}
 		}
 		
 		$encuesta .= '</tbody>
@@ -547,12 +559,42 @@ class encuesta {
 		
 	}
 	
-	public function getRespuestasResults($id_pregunta='')
+	public function getRespuestasResults($edades=0)
 	{
 		$db = $this->db;
 		//Obtenemos las preguntas
 		$preguntas = $this->getPreguntas();
 		
+		if($edades != 0)
+		{
+			//Si ha especificado una edad
+			switch($edades) {
+				case 1:
+					$db->where ('edad', 18, ">=");
+					$db->where ('edad', 30, "<=");
+					break;
+				case 2:
+					$db->where ('edad', 30, ">");
+					$db->where ('edad', 45, "<=");
+					break;
+				case 3:
+					$db->where ('edad', 45, ">");
+					$db->where ('edad', 60, "<=");
+					break;
+				case 4:
+					$db->where ('edad', 60, ">");
+					break;
+			}
+		
+			$encuestados = $db->get('encuestados',null, array('id_encuestado'));
+			
+			$array_IN = [0];
+			foreach($encuestados AS $key => $val)
+			{
+				$array_IN = [$val['id_encuestado']];
+			}
+			
+		}
 		$resultados = ['radio' => array(),'texto' => array()];
 		//Por cada pregunta, obtenemos los resultados
 		foreach($preguntas AS $id => $data)
@@ -567,9 +609,11 @@ class encuesta {
 				//Obtenemos los resultados
 				foreach($data['opciones'] AS $id_opt => $text_opt)
 				{
+					
 					//Obtenemos el número de respuestas
 					$db->where('id_pregunta',$id);
 					$db->where('opt',$id_opt);
+					if($edades != 0) $db->where('id_encuestado', Array( 'IN' => $array_IN ) );
 					$db->get('respuestas');
 					//Añadimos el resultado al array
 					$resultados['radio'][$id]['resultados'][$text_opt] = $db->count;
@@ -579,11 +623,19 @@ class encuesta {
 			{
 				$resultados['texto'][$id] = array();
 				//Buscamos las respuestas dadas a esa pregunta
+				$db->where('id_pregunta',$id);
+				if($edades != 0) $db->where('id_encuestado', Array( 'IN' => $array_IN ) );
+				$respuestas_largas = $db->get('respuestas_largas');
+				foreach($respuestas_largas AS $key => $val)
+				{
+					$resultados['texto'][$id][$val['id_encuestado']][$val['seccion']] = $val['respuesta'];
+				}
+				
 				
 			}
 			
 		}
-		
+
 		//print_r($resultados);
 		/*
 		$db = $this->db;
@@ -599,24 +651,109 @@ class encuesta {
 	
 }
 
-class charts {
+class results {
 	
-	public function showChart($domId, $data)
+	private $db;
+	
+	function __construct()
+	{
+		//Obtenemos los datos del sitio
+		$site = new Site;
+		
+		//Conectamos con la base de datos
+		if(!$this->db = new MysqliDb (Array (
+				'host' => c::get('db.host'),
+				'username' => c::get('db.username'), 
+				'password' => c::get('db.password'),
+				'db'=> c::get('db.database'),
+				'port' => c::get('db.port'),
+				'prefix' => '',
+				'charset' => 'utf8'))
+		   )
+		{
+			die('Se ha producido un problema al conectar con la base de datos' . $db->getLastError());
+		}
+		
+	}
+	
+	function __destruct(){
+		$this->db->disconnect();
+	}
+	
+	public function showTextRadioResponse($id,$id_opt)
+	{
+		//Obtenemos las opciones posibles		
+		$db = $this->db;
+		$result = $db->where('id_opt',$id_opt);
+		
+		$results = $db->getOne('options');
+		$opts = array();
+		for($n=1;$n<=7;$n++)
+		{
+			$opts[$n] = $results['opt_' . $n];
+		}
+		
+		//Construimos el texto devuelto
+		$txt = '<ol>
+		';
+		
+		
+		$db->where('id_pregunta',$id);
+		$results = $db->get('respuestas_largas');
+		foreach($results AS $key => $val)
+		{
+			//Obtenemos la puntuación
+			$db->where('id_encuestado',$val['id_encuestado']);
+			$db->where('id_pregunta',$id);
+			$opt = $db->getOne('respuestas');
+			//Si no ha dejado en blanco la respuesta
+			$opt_sel = ($opt['opt'] != '') ? $opts[$opt['opt']] : 'Sin responder';
+			$txt .= '<li>' . $val['respuesta'] . ' -> ' . $opt_sel . '</li>';
+		}
+		
+		$txt .= '
+		</ol>';
+		
+		return $txt;
+	}
+	public function showChart($domId, $data, $label='',$legend=true)
 	{
 		//Construimos las opciones
 		$options = "[";
 		$values = "[";
 		foreach($data['resultados'] AS $texto => $resultado)
 		{
+			//Hay que tener cuidado que la pregunta no tenga saltos de carro en la base de datos
 			$options .= '"' . $texto . '",';
 			$values .= $resultado . ',';
 		}
 		$options .= "]";
 		$values .= "]";
 		
+		//Si se ha especificado etiqueta
+		$label_txt = '';
+		if($label!='')
+		{
+			$label_txt = 'title: {
+            display: true,
+            text: \'' . $label . '\'
+        },';
+		}
+		//Si se ha quitado la leyenda
+		$legend_txt = '';
+		if(!$legend)
+		{
+			$legend_txt = 'legend: {
+            	display: false,
+            },';
+		}
+		
+			
+		
 		$txt = 'var ctx = document.getElementById("' . $domId . '").getContext(\'2d\');
 var myChart = new Chart(ctx, {
     type: \'pie\',
+	responsive: true,
     data: {
         labels: ' . $options . ',
         datasets: [{
@@ -642,10 +779,8 @@ var myChart = new Chart(ctx, {
         }]
     },
     options: {
-		title: {
-            display: true,
-            text: \'' . $data['texto'] . '\'
-        }
+		' . $label_txt . '
+		' . $legend_txt . '
     }
 });
 ';
