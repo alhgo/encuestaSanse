@@ -10,7 +10,7 @@
 			<p>Si ya has dado tus datos para realizar la encuesta, escribe de nuevo tu correo electrónico y volveremos a mandarte el enlace.</p>
 			<p>
 			<form action="" method="post">
-				<div class="form-group has-danger">
+				<div class="form-group has-danger <?php echo (isMobile()) ? 'focused' : '' ?>">
 				  <label class="form-label" for="remember_email" id="label_username">Correo</label>
 				  <input type="text" class="form-control" id="remember_email" name="remember_email">
 				</div>

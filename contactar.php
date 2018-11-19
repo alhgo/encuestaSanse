@@ -100,9 +100,7 @@ if(isset($_POST['consulta']) && $_POST['consulta'] != '')
 	
 
 	</div>
-	
-<?php snippet('encuesta/remember_form_modal.php'); ?>
-	
+
 <?php snippet('footer.php', ['libs' => array('forms.js')]); ?>
 
 </body>

@@ -54,10 +54,12 @@ foreach($libs AS $key=>$value)
 /*CONFIG*/
 require_once(dirname(__FILE__).'/config.php');
 
-//Si existe un archivo de configuración específico para el dominio, lo cargamos
-if(file_exists(dirname(__FILE__).'/config.'.$_SERVER['SERVER_NAME'].'.php'))
+//Si existe un archivo de configuración específico para el dominio (sin las wwww), lo adjuntamos
+$domain =  preg_replace('/^www\./','',$_SERVER['SERVER_NAME']);
+
+if(file_exists(dirname(__FILE__).'/config.'.$domain.'.php'))
 {
-	require_once(dirname(__FILE__).'/config.'.$_SERVER['SERVER_NAME'].'.php');
+	require_once(dirname(__FILE__).'/config.'.$domain.'.php');
 }
 
 /*TEST MYSQL*/
@@ -73,7 +75,7 @@ if(c::get('use.database'))
 			'charset' => 'utf8'))
 	   )
 	{
-		die('Se ha producido un problema al conectar con la base de datos' . $db->getLastError());
+		die('Se ha producido un problema al conectar con la base de datos');
 	}
 	else{
 		//Comprobamos que la tabla de base de datos existe

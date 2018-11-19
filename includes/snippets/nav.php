@@ -9,7 +9,7 @@ $current = basename( $_SERVER[ 'PHP_SELF' ] );
 		<!--title/logo-->
 		<a class="navbar-brand pt-0 pb-0" href="<?= $site->url ?>">
 		<?php if(is_file(__DIR__ . '/../../images/logo_top.png')) : ?>
-		<img src="<?= $site->url ?>/images/logo_top.png" alt="<?= $site->title ?>" title="<?= $site->title ?>" height="42">
+		<img src="<?= $site->url ?>images/logo_top.png" alt="<?= $site->title ?>" title="<?= $site->title ?>" height="42">
 		<?php else : ?>
 		<?= $site->title ?>
 		<?php endif ?>

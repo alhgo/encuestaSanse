@@ -1,5 +1,5 @@
 <?php
-
+$site = new Site;
 $user = new Users;
 
 ?>
@@ -7,7 +7,7 @@ $user = new Users;
 			<div class="row justify-content-center">
 				<div class="col-12 col-md-8 col-lg-6 pb-5">
                     <!--Contact Form-->
-					<form action="" method="post">
+					<form action="<?php echo $site->url ?>contactar.php" method="post">
                         <div class="card border-primary rounded-0">
                             <div class="card-header p-0">
                                 <div class="bg-info text-white text-center py-2">
@@ -56,7 +56,7 @@ $user = new Users;
 								
                                 <div class="text-center">
 									
-                                    <input type="submit" value="Enviar" type="submit" class="btn btn-info btn-block rounded-0 py-2 cursor_none" id="contact-button" disabled>
+                                    <input type="submit" value="Enviar" type="submit" class="btn btn-info btn-block rounded-0 py-2 cursor_none" id="contact-button">
                                 </div>
                             </div>
 

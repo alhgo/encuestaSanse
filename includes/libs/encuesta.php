@@ -111,7 +111,7 @@ class encuesta {
 	{
 		
 		$db = $this->db;
-		
+		$db->orderBy ("zonas.code","asc");
 		if(!$zonas = $db->get('zonas')) {
 			die('La base de datos no está correctamente configurada: ' . $db->getLastError());
 		}

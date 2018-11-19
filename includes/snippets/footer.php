@@ -35,7 +35,7 @@
 <footer class="footer">
   <div class="container">
 	<p class="text-center"><span class="text-muted"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licencia de Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-		LaUltimaPregunta.com</span></p>
+		</span></p>
   </div>
 </footer>
 	<script>

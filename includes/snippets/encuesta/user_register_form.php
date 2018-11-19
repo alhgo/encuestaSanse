@@ -6,6 +6,9 @@ error_reporting(E_ALL);
 $encuesta = new encuesta;
 $zonas = $encuesta->getZonas();
 
+function isMobile() {
+    return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+}
 ?>
 	<h4>Rellena el formulario para poder realizar la encuesta</h4>
     <div class="row">
@@ -14,20 +17,21 @@ $zonas = $encuesta->getZonas();
 	  
 			  <div class="form-row">
 
-			  	<div class="form-group col-md-6">
+			  	<div class="form-group col-md-6 <?php echo (isMobile()) ? 'focused' : '' ?>">
 				  <label for="r-name"  class="form-label">Nombre (opcional)</label>
 				  <input type="text" class="form-control" id="r-name" name="r-name"  maxlength="150">
 				  <div class="invalid-feedback" id="fb-name"></div>
 				</div>
-				<div class="form-group col-md-6">
+				<div class="form-group col-md-6 <?php echo (isMobile()) ? 'focused' : '' ?>">
 				  <label class="form-label label-badge" for="r-email">Correo electrónico</label>
 				  <div class="input-group mb-2">
 					<div class="input-group-prepend">
 					  <div class="input-group-text"><span class="badge badge-pill " id="badge-email"><i class="fa" id="i-email"></i></span></div>
 					</div>
 					<input type="text" class="form-control " name="r-email" id="r-email" maxlength="150">
-					<p class="small m-0">No será usado para otro fin distinto al de la validación de la encuesta.</p>
+					
 				  </div>
+					<p class="small m-0">No será usado para otro fin distinto al de la validación de la encuesta.</p>
 				  <div class="invalid-feedback" id="fb-email"></div>
 				</div>
 			  </div>
